@@ -38,15 +38,16 @@
     if (main) main.setAttribute("inert", "");
   }
 
-  function unlockScroll() {
+  function unlockScroll(toY) {
+    var y = typeof toY === "number" ? toY : scrollY;
     document.documentElement.classList.remove("is-menu-open");
     document.body.classList.remove("is-menu-open");
     document.body.style.top = "";
     if (main) main.removeAttribute("inert");
-    window.scrollTo(0, scrollY);
+    window.scrollTo(0, y);
   }
 
-  function setOpen(open) {
+  function setOpen(open, unlockToY) {
     if (!burger || !menu) return;
     burger.setAttribute("aria-expanded", open ? "true" : "false");
     burger.setAttribute("aria-label", open ? "Закрыть меню" : "Открыть меню");
@@ -56,11 +57,34 @@
       menu.removeAttribute("hidden");
       lockScroll();
       var first = menu.querySelector("a");
-      if (first) first.focus();
+      if (first) {
+        try { first.focus({ preventScroll: true }); }
+        catch (err) { first.focus(); }
+      }
     } else {
       menu.setAttribute("hidden", "");
-      unlockScroll();
+      unlockScroll(unlockToY);
     }
+  }
+
+  function scrollPaddingTop() {
+    var pad = parseFloat(window.getComputedStyle(document.documentElement).scrollPaddingTop);
+    return isNaN(pad) ? 0 : pad;
+  }
+
+  /* Document Y for hash while scroll-lock may be active (saved scrollY + rect). */
+  function hashDocumentY(hash) {
+    if (!hash || hash.charAt(0) !== "#") return null;
+    if (hash === "#" || hash === "#top") return 0;
+    var target = document.getElementById(hash.slice(1));
+    if (!target) return null;
+    return Math.max(0, Math.round(scrollY + target.getBoundingClientRect().top - scrollPaddingTop()));
+  }
+
+  function focusBurger() {
+    if (!burger || typeof burger.focus !== "function") return;
+    try { burger.focus({ preventScroll: true }); }
+    catch (err) { burger.focus(); }
   }
 
   function scrollToHash(hash) {
@@ -81,7 +105,7 @@
     burger.addEventListener("click", function () {
       var open = burger.getAttribute("aria-expanded") !== "true";
       setOpen(open);
-      if (!open) burger.focus();
+      if (!open) focusBurger();
     });
 
     menu.addEventListener("click", function (e) {
@@ -90,23 +114,34 @@
       var hash = link.getAttribute("href") || "";
       if (hash.charAt(0) === "#") {
         e.preventDefault();
-        setOpen(false);
-        burger.focus();
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () {
-            scrollToHash(hash);
-          });
-        });
+        /* Destination while lock active — no unlock→0→scrollIntoView flash from hero */
+        var destY = hashDocumentY(hash);
+        if (destY === null) {
+          setOpen(false);
+          focusBurger();
+          return;
+        }
+        var startY = scrollY;
+        if (reduceMotion || destY === startY) {
+          setOpen(false, destY);
+        } else {
+          setOpen(false, startY);
+          window.scrollTo({ top: destY, behavior: "smooth" });
+        }
+        if (history.replaceState) {
+          history.replaceState(null, "", hash === "#" ? "#top" : hash);
+        }
+        focusBurger();
         return;
       }
       setOpen(false);
-      burger.focus();
+      focusBurger();
     });
 
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && burger.getAttribute("aria-expanded") === "true") {
         setOpen(false);
-        burger.focus();
+        focusBurger();
       }
     });
 
