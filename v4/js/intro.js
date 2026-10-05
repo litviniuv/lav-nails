@@ -210,8 +210,8 @@
   var CARD_SRC = [
     ["images/work-01.jpg", 1], ["images/work-02.jpg", 1], ["images/work-03.jpg", 1],
     ["images/work-04.jpg", 1], ["images/work-05.jpg", 1], ["images/work-06.jpg", 1],
-    ["images/interior-01.jpg", 0], ["images/interior-02.jpg", 0],
-    ["images/interior-03.jpg", 0], ["images/interior-04.jpg", 0]
+    ["images/interior-02.jpg", 0], ["images/interior-03.jpg", 0],
+    ["images/interior-04.jpg", 0]
   ];
 
   function pickCards(n) {
@@ -224,7 +224,9 @@
       return a;
     }
     shuffle(works); shuffle(inter);
-    var out = [works[0], inter[0], works[1], inter[1], works[2]];
+    /* always exactly 3 works + 1 non-01 interior (n=4) */
+    var out = [works[0], works[1], works[2], inter[0]];
+    shuffle(out);
     return out.slice(0, n);
   }
 
