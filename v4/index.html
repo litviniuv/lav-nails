@@ -16,18 +16,40 @@
   <link rel="preload" href="fonts/cormorant-garamond-700.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/intro.css">
+  <script>
+    (function () {
+      var d = document.documentElement;
+      try { if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) {}
+      if (!("animate" in d)) return;
+      d.classList.add("intro-on");
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      /* safety: if intro.js never runs, drop the cover */
+      setTimeout(function () {
+        if (window.__lavIntroStarted) return;
+        d.classList.remove("intro-on");
+        var i = document.querySelector(".intro");
+        if (i && i.parentNode) i.parentNode.removeChild(i);
+      }, 6000);
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">К содержанию</a>
 
-    <div class="demo-strip" role="note">
+  <div class="demo-strip" role="note">
     <span class="demo-phrase">ДЕМОНСТРАЦИЯ! НЕ ОФИЦИАЛЬНЫЙ САЙТ БИЗНЕСА</span>
     <nav class="variant-switch" aria-label="Варианты дизайна">
-      <a href="index.html" aria-current="page" aria-label="Вариант 1">1</a>
-      <a href="v2/index.html" aria-label="Вариант 2">2</a>
-      <a href="v3/index.html" aria-label="Вариант 3">3</a>
-      <a href="v4/index.html" aria-label="Вариант 4">4</a>
+      <a href="../index.html" aria-label="Вариант 1">1</a>
+      <a href="../v2/index.html" aria-label="Вариант 2">2</a>
+      <a href="../v3/index.html" aria-label="Вариант 3">3</a>
+      <a href="index.html" aria-current="page" aria-label="Вариант 4">4</a>
     </nav>
+  </div>
+
+  <div class="intro" aria-hidden="true">
+    <p class="intro__digit"><span>3</span></p>
+    <p class="intro__title">ЛАВ</p>
   </div>
 
   <header class="site-header">
@@ -260,5 +282,6 @@
   </footer>
 
   <script src="js/main.js" defer></script>
+  <script src="js/intro.js" defer></script>
 </body>
 </html>

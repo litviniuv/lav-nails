@@ -396,7 +396,7 @@ body.is-menu-open .nav-drawer {
   touch-action: pan-y;
 }
 
-/* Chrome is position:fixed — stays in viewport while body is shifted for scroll lock */
+/* Chrome is position:fixed - stays in viewport while body is shifted for scroll lock */
 html.is-menu-open .demo-strip {
   z-index: 80;
 }
@@ -980,7 +980,7 @@ main {
   }
 }
 
-/* variant switcher (site-all preview) — keep strip one line so --demo-h stays valid */
+/* variant switcher (site-all preview) - keep strip one line so --demo-h stays valid */
 .demo-strip {
   display: flex;
   align-items: center;

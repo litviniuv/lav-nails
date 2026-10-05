@@ -1108,7 +1108,7 @@ body.is-menu-open .nav-drawer {
   }
 }
 
-/* variant switcher (site-all preview) — keep strip one line so --demo-h stays valid */
+/* variant switcher (site-all preview) - keep strip one line so --demo-h stays valid */
 .demo-strip {
   display: flex;
   align-items: center;
