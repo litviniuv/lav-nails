@@ -597,14 +597,26 @@
     title.style.maxWidth = "none";
   }
 
-  /* Sharp one-shot pulse at wall break; title stays locked (no drift with shards) */
+  /* Sharp one-shot pulse at wall break; title stays locked (no drift with shards).
+     Mobile needs a larger peak so the pulse reads on small screens; desktop stays subtle. */
   function pulseTitle() {
     if (!els.title || !els.title.animate) return;
-    els.title.animate([
+    var narrow = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+    var peak = narrow ? 1.14 : 1.06;
+    if (intro) intro.classList.add("is-title-pulse");
+    var anim = els.title.animate([
       { transform: "scale(1)" },
-      { transform: "scale(1.06)", offset: 0.34 },
+      { transform: "scale(" + peak + ")", offset: 0.34 },
       { transform: "scale(1)" }
     ], { duration: 360, easing: "cubic-bezier(.15,.9,.25,1)", fill: "forwards" });
+    function clearPulse() {
+      if (intro) intro.classList.remove("is-title-pulse");
+    }
+    if (anim && anim.finished && anim.finished.then) {
+      anim.finished.then(clearPulse).catch(clearPulse);
+    } else {
+      setTimeout(clearPulse, 400);
+    }
   }
 
   /* ---------- break ---------- */

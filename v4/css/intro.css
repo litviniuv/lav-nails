@@ -216,6 +216,16 @@ html.intro-on .intro {
   }
 }
 
+
+/* During mobile pulse peak (~1.14), let title paint past the frame so edges do not clip */
+.intro.is-title-pulse {
+  overflow: visible;
+}
+.intro.is-title-pulse .intro__title {
+  z-index: 20;
+  overflow: visible;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .intro,
   html.intro-on .intro {
