@@ -164,7 +164,7 @@
     cb();
   }
 
-  /* ---------- dust ---------- */
+  /* ---------- dust (v4: a bit denser, drifts up a bit faster) ---------- */
   function startDust() {
     var c = els.dust;
     var ctx = c.getContext && c.getContext("2d");
@@ -173,14 +173,14 @@
     c.width = Math.round(W * dpr);
     c.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var n = W < 700 ? 14 : 24;
+    var n = W < 700 ? 22 : 38;
     var ps = [];
     for (var i = 0; i < n; i++) {
       ps.push({
         x: rnd() * W, y: rnd() * H,
-        r: 0.6 + rnd() * 1.3,
-        vx: (rnd() - 0.5) * 0.012,
-        vy: -(0.004 + rnd() * 0.012),
+        r: 0.55 + rnd() * 1.35,
+        vx: (rnd() - 0.5) * 0.014,
+        vy: -(0.007 + rnd() * 0.018),
         a: 0.12 + rnd() * 0.3,
         ph: rnd() * 6.28
       });
