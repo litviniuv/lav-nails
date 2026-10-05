@@ -164,7 +164,7 @@
     cb();
   }
 
-  /* ---------- dust (v4: a bit denser, drifts up a bit faster) ---------- */
+  /* ---------- dust (v4: ~2x particles vs original, ~2x upward speed) ---------- */
   function startDust() {
     var c = els.dust;
     var ctx = c.getContext && c.getContext("2d");
@@ -173,15 +173,15 @@
     c.width = Math.round(W * dpr);
     c.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var n = W < 700 ? 22 : 38;
+    var n = W < 700 ? 28 : 48;
     var ps = [];
     for (var i = 0; i < n; i++) {
       ps.push({
         x: rnd() * W, y: rnd() * H,
-        r: 0.55 + rnd() * 1.35,
-        vx: (rnd() - 0.5) * 0.014,
-        vy: -(0.007 + rnd() * 0.018),
-        a: 0.12 + rnd() * 0.3,
+        r: 0.55 + rnd() * 1.45,
+        vx: (rnd() - 0.5) * 0.016,
+        vy: -(0.008 + rnd() * 0.024),
+        a: 0.14 + rnd() * 0.34,
         ph: rnd() * 6.28
       });
     }
