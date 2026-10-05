@@ -164,7 +164,7 @@
     cb();
   }
 
-  /* ---------- dust (v4: ~2x particles vs original, ~2x upward speed) ---------- */
+  /* ---------- dust (v4: ~2x particles; ~1.75–2x faster upward) ---------- */
   function startDust() {
     var c = els.dust;
     var ctx = c.getContext && c.getContext("2d");
@@ -180,7 +180,7 @@
         x: rnd() * W, y: rnd() * H,
         r: 0.55 + rnd() * 1.45,
         vx: (rnd() - 0.5) * 0.016,
-        vy: -(0.008 + rnd() * 0.024),
+        vy: -(0.016 + rnd() * 0.04),
         a: 0.14 + rnd() * 0.34,
         ph: rnd() * 6.28
       });

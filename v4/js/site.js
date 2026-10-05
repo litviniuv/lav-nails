@@ -178,7 +178,7 @@
 })();
 
 
-/* Soft page-atmosphere dust (olive-gold / cream), skipped under reduced motion */
+/* Soft page-atmosphere dust (cream #f3ecdf), skipped under reduced motion */
 (function () {
   try {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -191,6 +191,7 @@
   if (!ctx) return;
   var fine = window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches;
   var pts = [], mx = 0, my = 0, W = 0, H = 0;
+  function rnd() { return Math.random(); }
   function size() {
     W = window.innerWidth; H = window.innerHeight;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -202,7 +203,15 @@
   window.addEventListener("resize", size);
   var n = W < 700 ? 55 : 90;
   for (var i = 0; i < n; i++) {
-    pts.push({ x: Math.random(), y: Math.random(), r: Math.random() * 1.5 + 0.25, v: Math.random() * 0.28 + 0.06, a: Math.random() });
+    pts.push({
+      x: rnd() * W,
+      y: rnd() * H,
+      r: 0.45 + rnd() * 1.35,
+      vx: (rnd() - 0.5) * 0.014,
+      vy: -(0.016 + rnd() * 0.04),
+      a: 0.12 + rnd() * 0.28,
+      ph: rnd() * 6.28
+    });
   }
   if (fine) {
     window.addEventListener("pointermove", function (e) {
@@ -210,20 +219,23 @@
       my = e.clientY / H - 0.5;
     }, { passive: true });
   }
-  var color = "#f3ecdf";
-  function loop() {
+  var last = performance.now();
+  function loop(now) {
+    var dt = Math.min(now - last, 50);
+    last = now;
     ctx.clearRect(0, 0, W, H);
     for (var i = 0; i < pts.length; i++) {
       var p = pts[i];
-      p.y -= p.v / 100;
-      if (p.y < 0) p.y = 1;
-      ctx.globalAlpha = 0.12 + p.a * 0.28;
-      ctx.fillStyle = color;
+      p.x += p.vx * dt + mx * 0.02;
+      p.y += p.vy * dt + my * 0.01;
+      if (p.y < -4) { p.y = H + 4; p.x = rnd() * W; }
+      if (p.x < -4) p.x = W + 4; else if (p.x > W + 4) p.x = -4;
+      var tw = 0.65 + 0.35 * Math.sin(now * 0.0012 + p.ph);
+      ctx.fillStyle = "rgba(243,236,223," + (p.a * tw).toFixed(3) + ")";
       ctx.beginPath();
-      ctx.arc((p.x + mx * 0.03) * W, (p.y + my * 0.02) * H, p.r, 0, 6.28);
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
       ctx.fill();
     }
-    ctx.globalAlpha = 1;
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);

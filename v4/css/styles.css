@@ -88,7 +88,7 @@ button:focus-visible {
   margin-inline: auto;
 }
 
-/* Atmospheric ground behind giant word — dust canvas + olive/cream glow (no interior photo) */
+/* Olive ground around framed hero photo + under page dust */
 .page-atmosphere {
   position: fixed;
   inset: 0;
@@ -402,6 +402,36 @@ html.is-menu-open .site-header {
   justify-content: flex-end;
   padding: 2rem 0 2.5rem;
   isolation: isolate;
+}
+
+/* Content-width waiting-area photo behind giant ЛАВ (not full-bleed) */
+.hero__media {
+  position: absolute;
+  left: 50%;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  width: min(100% - 2rem, var(--max));
+  z-index: 1;
+  border-radius: var(--radius-shot);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero__media-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(23, 22, 15, 0.52) 0%, rgba(23, 22, 15, 0.28) 42%, rgba(23, 22, 15, 0.62) 100%),
+    radial-gradient(80% 70% at 50% 45%, rgba(23, 22, 15, 0.12), rgba(23, 22, 15, 0.55));
 }
 
 .hero__stage {
@@ -1006,11 +1036,11 @@ main {
 }
 
 
-/* Soft page dust (olive-gold / cream) — under content, never steals clicks */
+/* Soft page dust (cream) — above sections, below chrome; never steals clicks */
 .page-dust {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: 8;
   pointer-events: none;
   opacity: 0.85;
 }
