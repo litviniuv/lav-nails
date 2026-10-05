@@ -163,21 +163,31 @@ html.intro-on .intro {
   display: inline-block;
 }
 
-/* Giant ЛАВ: v3/v7 scale & read; v4 palette; dust/effects wall behind (no photo fill) */
+/* Giant ЛАВ: locked to hero frame (chrome-aware) + settled ready metrics.
+   JS syncTitleToHeroWord() overwrites with measured .hero__word / .hero__stage boxes. */
 .intro__title {
   position: absolute;
-  inset: 0;
+  /* Match .hero__stage: below chrome, same insets as framed photo */
+  top: calc(var(--chrome) + 1.25rem);
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  width: min(100% - 2rem, var(--max));
+  height: calc(var(--app-vh, 100svh) - var(--chrome) - 2.5rem);
+  margin: 0 0 0 calc(-0.5 * min(100% - 2rem, var(--max)));
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
   padding: 0 0.5rem;
+  box-sizing: border-box;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(4.5rem, 28vw, 18rem);
+  /* Match .hero__word (vw fallback + frame-relative feel); JS copies computed size */
+  font-size: clamp(2.75rem, 22vw, 18rem);
   line-height: 0.85;
-  letter-spacing: 0.12em;
-  text-indent: 0.12em;
+  /* Settled .hero.is-ready state — no kerning settle jump on handoff */
+  letter-spacing: 0.04em;
+  text-indent: 0.04em;
   text-align: center;
   text-transform: uppercase;
   color: #f3ecdf;
@@ -187,9 +197,23 @@ html.intro-on .intro {
     0 0 80px rgba(146, 144, 57, 0.22);
   opacity: 0;
   pointer-events: none;
-  max-width: 100%;
+  max-width: none;
   word-break: keep-all;
   overflow-wrap: normal;
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 479px) {
+  .intro__title {
+    top: calc(var(--chrome) + 0.85rem);
+    width: min(100% - 1.25rem, var(--max));
+    height: calc(var(--app-vh, 100svh) - var(--chrome) - 1.7rem);
+    margin-left: calc(-0.5 * min(100% - 1.25rem, var(--max)));
+    font-size: clamp(2.4rem, 20vw, 5.5rem);
+    letter-spacing: 0.02em;
+    text-indent: 0.02em;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

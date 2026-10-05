@@ -9,6 +9,27 @@
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   var scrollY = 0;
 
+  /* Lock layout viewport height once — ignore mobile URL-bar resize jitter */
+  (function lockAppVh() {
+    var lastW = window.innerWidth;
+    function set() {
+      document.documentElement.style.setProperty("--app-vh", window.innerHeight + "px");
+    }
+    set();
+    window.addEventListener("resize", function () {
+      if (Math.abs(window.innerWidth - lastW) < 2) return;
+      lastW = window.innerWidth;
+      set();
+    });
+    window.addEventListener("orientationchange", function () {
+      setTimeout(function () {
+        lastW = window.innerWidth;
+        set();
+      }, 120);
+    });
+  })();
+
+
   function lockScroll() {
     scrollY = window.scrollY || window.pageYOffset || 0;
     document.documentElement.classList.add("is-menu-open");
@@ -197,15 +218,33 @@
   var idleMs = 2500;
   var lastActivity = performance.now();
   function rnd() { return Math.random(); }
+  var lastDustW = 0;
   function size() {
-    W = window.innerWidth; H = window.innerHeight;
+    W = window.innerWidth;
+    /* Prefer locked --app-vh so URL-bar hide does not resize the dust layer */
+    var locked = 0;
+    try {
+      locked = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--app-vh")) || 0;
+    } catch (e) {}
+    H = locked || window.innerHeight;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     c.width = Math.round(W * dpr);
     c.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   size();
-  window.addEventListener("resize", size);
+  lastDustW = window.innerWidth;
+  window.addEventListener("resize", function () {
+    if (Math.abs(window.innerWidth - lastDustW) < 2) return;
+    lastDustW = window.innerWidth;
+    size();
+  });
+  window.addEventListener("orientationchange", function () {
+    setTimeout(function () {
+      lastDustW = window.innerWidth;
+      size();
+    }, 140);
+  });
   var n = W < 700 ? 55 : 90;
   for (var i = 0; i < n; i++) {
     pts.push({

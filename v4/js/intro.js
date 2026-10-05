@@ -560,6 +560,53 @@
     els.shards.appendChild(frag);
   }
 
+
+  /* Match intro title box + type to settled hero giant word (no handoff jump) */
+  function syncTitleToHeroWord() {
+    var title = els.title || (intro && intro.querySelector(".intro__title"));
+    var stage = document.querySelector(".hero__stage");
+    var word = document.querySelector(".hero__word");
+    var hero = document.querySelector("[data-hero]");
+    if (!title || !stage || !word) return;
+    if (hero && !hero.classList.contains("is-ready")) hero.classList.add("is-ready");
+    void word.offsetWidth;
+    var sr = stage.getBoundingClientRect();
+    var cs = getComputedStyle(word);
+    title.style.position = "absolute";
+    title.style.left = sr.left + "px";
+    title.style.top = sr.top + "px";
+    title.style.width = sr.width + "px";
+    title.style.height = sr.height + "px";
+    title.style.right = "auto";
+    title.style.bottom = "auto";
+    title.style.margin = "0";
+    title.style.padding = "0 0.5rem";
+    title.style.boxSizing = "border-box";
+    title.style.display = "flex";
+    title.style.alignItems = "center";
+    title.style.justifyContent = "center";
+    title.style.fontFamily = cs.fontFamily;
+    title.style.fontWeight = cs.fontWeight;
+    title.style.fontSize = cs.fontSize;
+    title.style.lineHeight = cs.lineHeight;
+    title.style.letterSpacing = cs.letterSpacing;
+    title.style.textIndent = cs.textIndent;
+    title.style.textAlign = "center";
+    title.style.textTransform = "uppercase";
+    title.style.transformOrigin = "center center";
+    title.style.maxWidth = "none";
+  }
+
+  /* Sharp one-shot pulse at wall break; title stays locked (no drift with shards) */
+  function pulseTitle() {
+    if (!els.title || !els.title.animate) return;
+    els.title.animate([
+      { transform: "scale(1)" },
+      { transform: "scale(1.06)", offset: 0.34 },
+      { transform: "scale(1)" }
+    ], { duration: 360, easing: "cubic-bezier(.15,.9,.25,1)", fill: "forwards" });
+  }
+
   /* ---------- break ---------- */
   function breakWall() {
     var O = geo.O;
@@ -609,16 +656,10 @@
       });
     });
 
-    /* title leaves with the last pieces */
-    var titleOut = WAVE[3] - 150;
-    at(titleOut, function () {
-      els.title.animate([
-        { opacity: 1, transform: "translateY(0) scale(1)" },
-        { opacity: 0, transform: "translateY(-3vh) scale(1.04)" }
-      ], { duration: 1000, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
-    });
+    /* Title stays locked in the hero-word spot; pulse once, then hand off on cleanup */
+    pulseTitle();
 
-    at(Math.max(last, titleOut + 1000) + 120, cleanup);
+    at(last + 120, cleanup);
   }
 
   /* ---------- timeline ---------- */
@@ -643,6 +684,7 @@
     [els.back, els.shards, els.dust, els.cards, els.cracks].reverse().forEach(function (n) {
       intro.insertBefore(n, intro.firstChild);
     });
+    syncTitleToHeroWord();
 
     startDust();
     scheduleCards();
@@ -661,8 +703,9 @@
     at(CRACK, runCracks);
     var TITLE = CRACK + geo.crackEnd - 80;
     at(TITLE, function () {
+      syncTitleToHeroWord();
       els.title.animate([
-        { opacity: 0, transform: "scale(.965)" },
+        { opacity: 0, transform: "scale(.972)" },
         { opacity: 1, transform: "scale(1)" }
       ], { duration: 820, easing: "cubic-bezier(.2,.7,.2,1)", fill: "forwards" });
     });

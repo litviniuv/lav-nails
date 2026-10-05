@@ -9,6 +9,27 @@
   var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   var scrollY = 0;
 
+  /* Lock layout viewport height once — ignore mobile URL-bar resize jitter */
+  (function lockAppVh() {
+    var lastW = window.innerWidth;
+    function set() {
+      document.documentElement.style.setProperty("--app-vh", window.innerHeight + "px");
+    }
+    set();
+    window.addEventListener("resize", function () {
+      if (Math.abs(window.innerWidth - lastW) < 2) return;
+      lastW = window.innerWidth;
+      set();
+    });
+    window.addEventListener("orientationchange", function () {
+      setTimeout(function () {
+        lastW = window.innerWidth;
+        set();
+      }, 120);
+    });
+  })();
+
+
   function lockScroll() {
     scrollY = window.scrollY || window.pageYOffset || 0;
     document.documentElement.classList.add("is-menu-open");

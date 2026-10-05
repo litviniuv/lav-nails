@@ -89,9 +89,13 @@ button:focus-visible {
 }
 
 /* - Page photo background (whole site) - */
+/* Explicit 100svh / --app-vh (not inset:0): mobile URL-bar must not resize the photo */
 .page-bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--app-vh, 100svh);
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -396,7 +400,7 @@ body.is-menu-open .nav-drawer {
   touch-action: pan-y;
 }
 
-/* Chrome is position:fixed - stays in viewport while body is shifted for scroll lock */
+/* Chrome is position:fixed — stays in viewport while body is shifted for scroll lock */
 html.is-menu-open .demo-strip {
   z-index: 80;
 }
@@ -409,7 +413,7 @@ html.is-menu-open .site-header {
 .hero {
   position: relative;
   z-index: 1;
-  min-height: calc(100svh - var(--chrome));
+  min-height: calc(var(--app-vh, 100svh) - var(--chrome));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -979,6 +983,7 @@ main {
     width: min(100% - 1.5rem, var(--max));
   }
 }
+
 
 /* variant switcher (site-all preview) - keep strip one line so --demo-h stays valid */
 .demo-strip {
