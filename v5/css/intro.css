@@ -1,0 +1,201 @@
+/* LAV intro v9: count 3-2-1-0, falling cards, cracks, wall break.
+   Dark curtain mood + hero06 dust. Giant ЛАВ like v7 scale; no photo fill. */
+
+.intro {
+  display: none;
+}
+
+html.intro-on,
+html.intro-on body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.intro-on body {
+  touch-action: none;
+}
+
+html.intro-on .intro {
+  --iw: 100vw;
+  --ih: 100vh;
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 135; /* above header (130) and drawer (125), below demo strip (140) */
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  background-color: #141810;
+  background-image:
+    radial-gradient(120% 90% at 16% 100%, rgba(62, 74, 50, 0.55), rgba(62, 74, 50, 0) 60%),
+    radial-gradient(90% 70% at 86% 8%, rgba(124, 140, 95, 0.16), rgba(124, 140, 95, 0) 65%),
+    linear-gradient(180deg, #1c2118 0%, #141810 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.intro.is-split {
+  background: transparent !important;
+}
+
+/* Shared wall fill: back plate and every shard use the same texture, offset per shard */
+.intro__back,
+.intro-shard {
+  background-color: #141810;
+  background-image:
+    var(--intro-noise, linear-gradient(transparent, transparent)),
+    radial-gradient(120% 90% at 16% 100%, rgba(62, 74, 50, 0.55), rgba(62, 74, 50, 0) 60%),
+    radial-gradient(90% 70% at 86% 8%, rgba(124, 140, 95, 0.16), rgba(124, 140, 95, 0) 65%),
+    linear-gradient(180deg, #1c2118 0%, #141810 100%);
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 160px 160px, var(--iw) var(--ih), var(--iw) var(--ih), var(--iw) var(--ih);
+}
+
+.intro__back {
+  position: absolute;
+  inset: 0;
+}
+
+.intro__shards {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+
+.intro-shard {
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+.intro-shard svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.intro.is-split .intro__back,
+.intro.is-split .intro__cracks {
+  visibility: hidden;
+}
+
+.intro.is-split .intro__shards {
+  visibility: visible;
+}
+
+.intro__dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.intro__cards {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.intro-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  padding: 6px 6px 7px;
+  background: #f1ece9;
+  border-radius: 6px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  will-change: transform;
+}
+
+.intro-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 3px;
+  background: #3e4a32;
+}
+
+.intro__cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.intro__cracks path,
+.intro-shard path {
+  fill: none;
+  stroke: rgba(215, 224, 196, 0.82);
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+}
+
+.intro__cracks path.is-hair,
+.intro-shard path.is-hair {
+  stroke: rgba(215, 224, 196, 0.48);
+}
+
+.intro__digit {
+  position: absolute;
+  left: clamp(14px, 4vw, 56px);
+  bottom: clamp(4px, 2vh, 26px);
+  width: 0.62em;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(7.5rem, 30vh, 17rem);
+  line-height: 0.86;
+  color: #f3efe8;
+  font-variant-numeric: lining-nums tabular-nums;
+  text-align: left;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.intro__digit span {
+  display: inline-block;
+}
+
+/* Giant ЛАВ: v7/v3 scale & spacing; solid ink on dark curtain dust (no photo fill) */
+.intro__title {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(4.5rem, 28vw, 18rem);
+  line-height: 0.85;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #f3efe8;
+  text-shadow:
+    0 0 48px rgba(20, 24, 16, 0.65),
+    0 2px 8px rgba(20, 24, 16, 0.4),
+    0 0 80px rgba(62, 74, 50, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  max-width: 100%;
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro,
+  html.intro-on .intro {
+    display: none !important;
+  }
+}
