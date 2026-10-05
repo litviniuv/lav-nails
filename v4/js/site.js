@@ -178,7 +178,8 @@
 })();
 
 
-/* Soft page-atmosphere dust (cream #f3ecdf), skipped under reduced motion */
+/* Soft page-atmosphere dust (cream #f3ecdf), skipped under reduced motion.
+   Pauses rAF when tab hidden or idle ~2.5s (no pointer/scroll/touch/keydown). */
 (function () {
   try {
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -191,6 +192,10 @@
   if (!ctx) return;
   var fine = window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches;
   var pts = [], mx = 0, my = 0, W = 0, H = 0;
+  var running = false;
+  var rafId = 0;
+  var idleMs = 2500;
+  var lastActivity = performance.now();
   function rnd() { return Math.random(); }
   function size() {
     W = window.innerWidth; H = window.innerHeight;
@@ -213,14 +218,31 @@
       ph: rnd() * 6.28
     });
   }
+  function markActivity() {
+    lastActivity = performance.now();
+    start();
+  }
   if (fine) {
     window.addEventListener("pointermove", function (e) {
       mx = e.clientX / W - 0.5;
       my = e.clientY / H - 0.5;
+      markActivity();
     }, { passive: true });
+  } else {
+    window.addEventListener("pointermove", markActivity, { passive: true });
   }
+  window.addEventListener("scroll", markActivity, { passive: true });
+  window.addEventListener("touchstart", markActivity, { passive: true });
+  window.addEventListener("keydown", markActivity);
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) stop();
+    else { lastActivity = performance.now(); start(); }
+  });
   var last = performance.now();
   function loop(now) {
+    rafId = 0;
+    if (document.hidden) { running = false; return; }
+    if (now - lastActivity > idleMs) { running = false; return; }
     var dt = Math.min(now - last, 50);
     last = now;
     ctx.clearRect(0, 0, W, H);
@@ -236,7 +258,40 @@
       ctx.arc(p.x, p.y, p.r, 0, 6.2832);
       ctx.fill();
     }
-    requestAnimationFrame(loop);
+    rafId = requestAnimationFrame(loop);
   }
-  requestAnimationFrame(loop);
+  function start() {
+    if (running || document.hidden) return;
+    running = true;
+    last = performance.now();
+    if (!rafId) rafId = requestAnimationFrame(loop);
+  }
+  function stop() {
+    running = false;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  }
+  start();
+})();
+
+/* Click-to-load Yandex map (avoids eager long task) */
+(function () {
+  var wrap = document.querySelector(".map-wrap[data-map-src]");
+  if (!wrap) return;
+  var btn = wrap.querySelector("[data-map-load]");
+  if (!btn) return;
+  function loadMap() {
+    if (wrap.classList.contains("is-loaded")) return;
+    var src = wrap.getAttribute("data-map-src");
+    if (!src) return;
+    var iframe = document.createElement("iframe");
+    iframe.title = "Лав Студия на Яндекс Картах";
+    iframe.src = src;
+    iframe.width = "560";
+    iframe.height = "400";
+    iframe.allowFullscreen = true;
+    iframe.setAttribute("loading", "lazy");
+    wrap.appendChild(iframe);
+    wrap.classList.add("is-loaded");
+  }
+  btn.addEventListener("click", loadMap);
 })();
