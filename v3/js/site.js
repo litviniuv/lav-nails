@@ -178,6 +178,27 @@
     }
   }
 
+  /* Scroll pans the photo clipped inside ЛАВ. Rest position matches the static crop. */
+  if (hero && !reduceMotion) {
+    var fillRaf = 0;
+    function syncHeroFill() {
+      fillRaf = 0;
+      if (document.documentElement.classList.contains("is-menu-open")) return;
+      var travel = Math.max((hero.offsetHeight || window.innerHeight) * 0.72, 1);
+      var y = window.scrollY || window.pageYOffset || 0;
+      var p = Math.max(0, Math.min(1, y / travel));
+      document.documentElement.style.setProperty("--fill-x", (50 - p * 28).toFixed(2) + "%");
+      document.documentElement.style.setProperty("--fill-y", (40 + p * 58).toFixed(2) + "%");
+    }
+    window.addEventListener("scroll", function () {
+      if (!fillRaf) fillRaf = requestAnimationFrame(syncHeroFill);
+    }, { passive: true });
+    window.addEventListener("resize", function () {
+      if (!fillRaf) fillRaf = requestAnimationFrame(syncHeroFill);
+    }, { passive: true });
+    syncHeroFill();
+  }
+
   /* Pointer parallax on page photo (fine pointer only) */
   if (pageBgImg && finePointer && !reduceMotion) {
     var raf = 0;

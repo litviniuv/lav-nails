@@ -468,8 +468,12 @@ html.is-menu-open .site-header {
   text-transform: uppercase;
   color: transparent;
   background-image: url("../images/interior-01.jpg");
+  background-repeat: no-repeat;
   background-size: cover;
-  background-position: calc(50% + var(--px, 0px)) calc(40% + var(--py, 0px));
+  /* --fill-x/y: scroll crop; --px/py: pointer nudge */
+  background-position:
+    calc(var(--fill-x, 50%) + var(--px, 0px))
+    calc(var(--fill-y, 40%) + var(--py, 0px));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
